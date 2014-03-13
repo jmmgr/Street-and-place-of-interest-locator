@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es" application="Root.vxml">
+	
+	<!--variables a revisar -->
+	<var name="origenAux"/>
+	<var name="origenAuxNum"/>
+
+	<form id="start">
+	  <block>
+		Hola, bienvenido al callejero de la ciudad de Madrid.<break time="1.5s"/>
+		<goto next="#ObtenerInfo"/>	
+		<!--goto next="#ProcesarInfo"/-->	
+	  </block>
+	</form>
+
+	<form id="ObtenerInfo">
+	  
+	 <!--le pedimos la calle de Entrada-->
+		<field name="origen">
+			<nomatch>
+			La calle no ha producido ningún resultado, por favor, repitala, o diga el nombre de otra calle.
+			</nomatch>
+			<help> Por favor, diga la calle origen: </help>
+			<noinput> Por favor, diga la calle origen: </noinput>
+			<!--Por que si ponesmos bargain=false hace mal al repetir la calle?? que faltaría?-->
+			<prompt> Por favor, diga la calle origen: </prompt>
+
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/calles1.grxml"/>
+			<filled>
+				<assign name="origenAux" expr="origen"/>
+		    </filled>
+		</field>
+
+	<!--le pedimos el numero origen-->
+		<field name="numeroOrigen">
+			<nomatch>No he entendido correctamente el número, por favor repitalo.  </nomatch>
+			<help>  Por favor, diga el número de la calle origen: </help>
+			<noinput> Por favor, diga el número de la calle origen:</noinput>
+			<prompt> Por favor, diga el número de la calle origen: </prompt>
+
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
+			<filled>
+				<assign name="origenAuxNum" expr="numeroOrigen"/>
+		   </filled>
+		</field>
+
+		<!--le decimos lo que se ha entendido-->
+		<block name="ConfirmacionEntradaOrigen"> 
+			<prompt bargein="false" xml:lang="es-es">La calle de origen es:  <value expr="origenAux"/>, número:  <value expr="origenAuxNum"/>. 
+			</prompt> 
+		</block>   
+
+
+	<!--Confirmamos-->
+
+		<field name="ConfirmaOrigen">
+			<nomatch> No le entiendo, diga Si o No.</nomatch>
+			<help> Por favor, diga Si o No: </help>
+			<noinput> Por favor, diga Si o No:</noinput>
+			<prompt bargein="false"> ¿Es correcto?: </prompt>
+				<grammar src="http://webhosting.voxeo.net/61369/www/grammar/SiNo.grxml"/>
+			<filled>
+				<if cond="ConfirmaOrigen=='No'"> 
+					<clear namelist="origen"/>
+					<clear namelist="origenAux"/>
+					<clear namelist="numeroOrigen"/>
+					<clear namelist="origenAuxNum"/>
+					<clear namelist="ConfirmacionEntradaOrigen"/>
+					<clear namelist="ConfirmaOrigen"/>
+						 <goto nextitem="origen"/>
+					<else/> 
+						<goto next="#ProcesarInfo"/>		 		 
+				</if> 
+			</filled>
+		</field>
+
+	</form>
+	 <!--Obtenemos la longitud y latitud de la calle origen-->
+	<form id="ProcesarInfo">
+	
+		<block name="ntradaOrigen"> 
+			<var name="origin" expr="origenAux+','+origenAuxNum+',Madrid'"/> 
+			<assign name="origin" expr="quitarEspacios(origin)"/>
+			<!--assign name="origin" expr="'agustin+de+foxa+4,+Madrid'"/-->
+			<var name="destination" expr="application.latSol +','+application.longSol"/>
+		
+			<!--Hacemos la peticion a google-->
+			<data name="xmlSubjects" srcexpr="MyXMLDest" namelist="origin destination language mode sensor"/>
+		
+			<var name="quote" expr="xmlSubjects.documentElement"/>		
+			<if cond="getStatus(quote)=='OK'">
+				<assign name="application.longOrigen" expr="getLongitud(quote)"/>
+				<assign name="application.latOrigen" expr="getLatitud(quote)"/>
+			<else/> 	
+				<goto next="#NoResultados"/>		
+			</if> 
+		</block>   
+
+		<block>
+			<goto next="#ObtenerOpcion"/>
+		</block>
+		
+
+	</form>
+	
+	
+	<form id="ObtenerOpcion">
+	  
+	<!--seleccionamos una opción entre metro, restaurante, callejero-->
+
+		<field name="opcion">
+			<nomatch> No le entiendo, por favor diga una opción.</nomatch>
+			<help> Por favor, seleccione una opción </help>
+			<noinput> Seleccione una opción</noinput>
+			<prompt bargein="false"><!--Dirígete al nordeste por Calle de Agustín de Foxá<value expr="decirAlgo()"/--> Si desea ir a otra calle diga uno, si desea ir a una parada de metro cercana diga dos, si desea ir a un restaurante cercano diga tres </prompt>
+				<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
+			<filled>
+				<if cond="opcion=='1'"> 
+					<goto next="ObtenerDestino.vxml"/>
+				<elseif cond="opcion=='2'"/>
+						<assign name="application.opcion" expr="'una parada de metro'"/>
+						<assign name="application.tipo" expr="'subway_station'"/>
+					<goto next="ObtenerOpciones.vxml"/>		
+				<elseif cond="opcion=='3'"/> 
+					<assign name="application.opcion" expr="'un restaurante'"/>
+						<assign name="application.tipo" expr="'restaurant'"/>
+					<goto next="ObtenerOpciones.vxml"/>		
+				<else/> 	
+					<prompt bargein="false"> Diga una de las opciones indicadas </prompt>
+					<clear namelist="opcion"/>
+					<goto next="#ObtenerOpcion"/>	
+					
+				</if> 
+			</filled>
+		</field>
+
+	</form>
+	
+	<form id="NoResultados" scope="document">
+	
+		  
+		<field name="otra">
+		    <nomatch>
+			No le he entiendo, por favor diga otra o salir.
+		    </nomatch>
+		    <help> Por favor, diga otra o salir: </help>
+			<noinput> Por favor, diga otra o salir: </noinput>
+			<prompt bargein="false"> <break time="1.5s"/> Su consulta no ha obtenido resultados.
+			Si quiere realizar otra consulta diga, otra. Si quiere salir diga, salir: </prompt>
+		     <grammar src="http://webhosting.voxeo.net/61369/www/grammar/otra.grxml"/>
+		    <filled>
+				 <if cond="otra=='Otra'">
+					 		<clear namelist="longOrigen"/>
+							<clear namelist="latOrigen"/>
+							<clear namelist="longDestino"/>
+							<clear namelist="latDestino"/>
+							<clear namelist="radio"/>
+							<clear namelist="tipo"/>
+
+							<goto next="ObtenerOrigen.vxml"/>
+				<else/>
+					<prompt bargein="false"> Gracias por usar el callejero de la ciudad de Madrid, un saludo. </prompt>
+					<exit/>
+				 </if>
+						
+			</filled>
+		</field>	  
+	
+	</form>
+</vxml>

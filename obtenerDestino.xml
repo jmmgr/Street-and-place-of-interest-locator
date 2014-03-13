@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es" application="Root.vxml">
+	
+	<!--variables a revisar -->
+	<var name="destinoAux"/>
+	<var name="destinoAuxNum"/>
+
+	<form id="ObtenerInfo">
+	  
+	 <!--le pedimos la calle destino-->
+		<field name="destino">
+			<nomatch>
+			La calle no ha producido ningún resultado, por favor, repitala, o diga el nombre de otra calle.
+			</nomatch>
+			<help> Por favor, diga la calle Destino: </help>
+			<noinput> Por favor, diga la calle destino: </noinput>
+			<!--Por que si ponesmos bargain=false hace mal al repetir la calle?? que faltaría?-->
+			<prompt> Por favor, diga la calle destino: </prompt>
+
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/calles1.grxml"/>
+			<filled>
+				<assign name="destinoAux" expr="destino"/>
+		    </filled>
+		</field>
+
+	<!--le pedimos el numero destino-->
+		<field name="numeroDestino">
+			<nomatch>No he entendido correctamente el número, por favor repitalo.  </nomatch>
+			<help>  Por favor, diga el número de la calle destino: </help>
+			<noinput> Por favor, diga el número de la calle destino:</noinput>
+			<prompt> Por favor, diga el número de la calle destino: </prompt>
+
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
+			<filled>
+				<assign name="destinoAuxNum" expr="numeroDestino"/>
+		   </filled>
+		</field>
+
+		<!--le decimos lo que se ha entendido-->
+		<block name="ConfirmacionEntradaDestino"> 
+			<prompt bargein="false" xml:lang="es-es">La calle destino es:  <value expr="destinoAux"/>, número:  <value expr="destinoAuxNum"/>. 
+			</prompt> 
+		</block>   
+
+
+	<!--Confirmamos-->
+
+		<field name="ConfirmaDestino">
+			<nomatch> No le entiendo, diga Si o No.</nomatch>
+			<help> Por favor, diga Si o No: </help>
+			<noinput> Por favor, diga Si o No:</noinput>
+			<prompt bargein="false"> ¿Es correcto?: </prompt>
+				<grammar src="http://webhosting.voxeo.net/61369/www/grammar/SiNo.grxml"/>
+			<filled>
+				<if cond="ConfirmaDestino=='No'"> 
+					<clear namelist="destino"/>
+					<clear namelist="destinoAux"/>
+					<clear namelist="numeroDestino"/>
+					<clear namelist="destinoAuxNum"/>
+					<clear namelist="ConfirmacionEntradaDestino"/>
+					<clear namelist="ConfirmaDestino"/>
+						 <goto nextitem="destino"/>
+					<else/> 
+						<goto next="#ProcesarInfo"/>		 		 
+				</if> 
+			</filled>
+		</field>
+
+	</form>
+	 <!--Obtenemos la longitud y latitud de la calle destino-->
+	<form id="ProcesarInfo">
+	
+		<block name="Destino"> 
+			<var name="origin" expr="destinoAux+','+destinoAuxNum+',Madrid'"/> 
+			<assign name="origin" expr="quitarEspacios(origin)"/>
+			<assign name="origin" expr="'mauricio+legendre+1,+Madrid'"/>
+			<var name="destination" expr="application.latSol +','+application.longSol"/>
+		
+			<!--Hacemos la peticion a google-->
+			<data name="xmlSubjects" srcexpr="MyXMLDest" namelist="origin destination language mode sensor"/>
+		
+			<var name="quote" expr="xmlSubjects.documentElement"/>	
+			<if cond="getStatus(quote)=='OK'">			
+				<assign name="application.longDestino" expr="getLongitud(quote)"/>
+				<assign name="application.latDestino" expr="getLatitud(quote)"/>
+			<else/> 	
+				<goto next="ObtenerOrigen.vxml#NoResultados"/>		
+			</if> 				
+		</block>   
+
+		<block>
+			<goto next="Informar.vxml"/>
+		</block>
+	</form>
+	
+</vxml>

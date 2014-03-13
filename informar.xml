@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es" application="Root.vxml">
+	<script src="funciones.js"/>
+
+<form id="start" scope="document">
+	<var name="indicacionAux"/>
+	<var name="origin" expr="application.latOrigen +','+application.longOrigen"/>
+	<var name="destination" expr="application.latDestino +','+application.longDestino"/>
+	<!--Hacemos la peticion a google-->
+	<data name="xmlSubjects" srcexpr="MyXMLDest" namelist="origin destination language mode sensor"/>
+ 
+	<var name="quote" expr="xmlSubjects.documentElement"/>
+	<!--cambio-->
+	<var name="indicaciones" expr="getElements(quote)"/>
+	<var name="distancias" expr="getDistancias(quote)"/>
+	
+	<var name="indice" expr="0"/>
+	<var name="longitud" expr="indicaciones.length"/>
+	<block>
+	<prompt bargein="false"> A continuación procederemos a decirle las indicaciones, para escuchar la siguiente indicación diga siguiente, 
+	para volver a escucharla diga repetir<break time="1.5s"/>  </prompt>
+	</block>
+	<block name="decirIndicacion"> 
+	 <log expr="origin"/>
+	 <log expr="destination"/>
+		<if cond="indice&lt;longitud">
+		<log expr="'mamboooo'"/>
+		<assign  name="indicacionAux" expr="getElement(indicaciones,indice)"/>
+		<log expr="quitarComillas(indicacionAux)"/>
+			<prompt bargein="false" xml:lang="es-es"> . <value expr="getElement(indicaciones,indice)"/>. <value expr="getElement(distancias,indice)"/>, metros </prompt>
+			<if cond="indice + 1 == longitud">
+				<goto nextitem="otra"/>
+			<else/>
+				<goto nextitem="repetir"/>
+			</if>
+	    <else/>
+			<prompt bargein="false" xml:lang="es-es"> Ha habido un problema con el API de GOOGLE, lo sentimos. </prompt>
+			<exit/>
+		</if>
+	</block>
+
+	<field name="repetir">
+		    <nomatch>
+			No le he entiendo, por favor diga siguiente o repetir.
+		    </nomatch>
+		    <help> Por favor, diga siguiente o repetir: </help>
+			<noinput> Por favor, diga siguiente o repetir: </noinput>
+		     <grammar src="http://webhosting.voxeo.net/61369/www/grammar/Repetir.grxml"/>
+		    <filled>
+				 <if cond="repetir=='Siguiente'">
+					 <assign name="indice" expr="indice+1" />
+				  </if>
+				  <clear namelist="destino"/>
+				<clear namelist="repetir"/>
+				 <goto nextitem="decirIndicacion"/>
+			
+			 </filled>
+	</field>
+		  
+	<field name="otra">
+		    <nomatch>
+			No le he entiendo, por favor diga otra o salir.
+		    </nomatch>
+		    <help> Por favor, diga otra o salir: </help>
+			<noinput> Por favor, diga otra o salir: </noinput>
+			<prompt bargein="false"> <break time="1.5s"/>  Si quiere realizar otra consulta diga, otra. Si quiere salir diga, salir: </prompt>
+		     <grammar src="http://webhosting.voxeo.net/61369/www/grammar/otra.grxml"/>
+		    <filled>
+				 <if cond="otra=='Otra'">
+					 		<clear namelist="longOrigen"/>
+							<clear namelist="latOrigen"/>
+							<clear namelist="longDestino"/>
+							<clear namelist="latDestino"/>
+							<clear namelist="radio"/>
+							<clear namelist="tipo"/>
+
+							<goto next="ObtenerOrigen.vxml"/>
+				<else/>
+					<prompt bargein="false"> Gracias por usar el callejero de la ciudad de Madrid, un saludo. </prompt>
+					<exit/>
+				 </if>
+						
+			</filled>
+	</field>	  
+	
+	  </form>
+
+</vxml>

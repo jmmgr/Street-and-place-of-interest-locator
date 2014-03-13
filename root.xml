@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es">
+	<script src="funciones.js"/>
+	<!--variables que vamos a compartir con todos -->
+	<var name="longOrigen" expr="'0'"/>
+	<var name="latOrigen" expr="'0'"/>
+	<var name="longDestino" expr="'0'"/>
+	<var name="latDestino" expr="'0'"/>
+	<var name="radio" expr="'0'"/>
+	<var name="tipo" expr="'0'"/>
+	<var name="opcion" expr="'0'"/>
+
+	<!--información peticiones a google-->
+	<var name="language" expr="'es'"/> 
+	<var name="sensor" expr="'false'"/> 
+	<var name="mode" expr="'walking'"/>
+	<var name="MyXMLDest" expr="'http://maps.google.es/maps/api/directions/xml?'"/> 
+	<var name="MyXMLPlaces" expr="'https://maps.googleapis.com/maps/api/place/search/xml?'"/> 
+	<var name="key" expr="'AIzaSyDZ_qFhjceA9xWgeBUBRImcQJvOd0k_jaI'"/>
+	
+	
+	<!--latitud y longitud de sol-->
+	<var name="latSol" expr="40.4169700"/>
+	<var name="longSol" expr="-3.7033700"/>
+
+	<!-- DEFINIMOS LA CAPTURA DE EVENTOS/ERRORES-->
+	<catch event="exit">
+	  <prompt xml:lang="es-es"> Ha seleccionado salir, gracias por usar el sistema de Callejero por Voz de la ciudad de Madrid, Adios. </prompt>
+	  <exit/>
+	</catch>
+	
+	<link event="help">
+	  <grammar root="main">
+		<rule id="main" scope="public">
+		  <item repeat="0-1"> por favor </item>
+		  <item repeat="0-1"> necesito </item>
+		  ayuda
+		  <item repeat="0-1"> me </item>
+		  <item repeat="0-1"> por favor</item>
+		</rule>
+	  </grammar>
+	</link>
+	
+	<link event="exit">
+		<grammar root="main">
+			<rule id="main" scope="public">
+				<one-of>
+					<item>salir</item>
+				</one-of>
+			</rule>
+		</grammar>
+	</link>
+	
+
+</vxml>

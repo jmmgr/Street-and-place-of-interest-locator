@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es" application="Root.vxml">
+	<script src="funciones.js"/>
+	
+	<var name="nombres"/>
+	<var name="quote"/>
+	<var name="contador" expr="0"/>
+<form id="start" scope="document">
+
+
+	<block name="decirIndicacion"> 
+
+			<prompt bargein="false" xml:lang="es-es"> A elegido la opcion buscar <value expr="application.opcion"/>, </prompt>
+
+	</block>
+		 <!--le pedimos un radio-->
+		<field name="distancia">
+			<nomatch>
+			Por favor diga la distancia en metros 
+			</nomatch>
+			<help> Por favor, diga la distancia en metros</help>
+			<noinput> Por favor, diga la distancia en metros </noinput>
+			<!--Por que si ponesmos bargain=false hace mal al repetir la calle?? que faltaría?-->
+			<prompt> Por favor, diga la distancia en metros en la que encontrar <value expr="application.opcion"/></prompt>
+
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
+			<filled>
+				<assign name="application.radio" expr="distancia"/>
+		    </filled>
+		</field>
+		<block name="radios"> 
+
+			<!--prompt bargein="false" xml:lang="es-es"> radio <value expr="distancia"/> </prompt-->
+			<goto next="#ProcesarInfo"/>
+		</block>
+		<block name="irSiguiente"> 
+
+			<goto next="#ProcesarInfo"/>
+		</block>
+		
+    </form>
+	
+	<form id="ProcesarInfo">
+		
+		<block name="places"> 
+			<!--prompt bargein="false" xml:lang="es-es"> pasamos </prompt-->
+			<var name="location" expr="application.latOrigen +','+application.longOrigen"/> 
+			<var name="radius" expr="application.radio"/>
+			<var name="types" expr="application.tipo"/>
+			<!--Hacemos la peticion a google-->
+				 <log expr="location"/>
+		<log expr="radius"/> 
+	 	 <log expr="types"/>
+		<log expr="key"/>
+			<data name="xmlSubjects" srcexpr="application.MyXMLPlaces" namelist="location radius types language sensor key"/>
+		
+			<assign name="quote" expr="xmlSubjects.documentElement"/>
+			
+				<if cond="getStatus(quote)=='OK'">
+					<!--prompt bargein="false" xml:lang="es-es"> <value expr="getStatus(quote)"/>, </prompt-->
+					<assign name="nombres" expr="getNombres(quote)"/>
+				<else/> 	
+					<goto next="ObtenerOrigen.vxml#NoResultados"/>		
+			</if> 
+		</block>   
+		
+		<field name="opcion">
+			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
+			
+			<prompt>Por favor, diga el número de la opción que quiere<break time="40ms"/></prompt>
+  
+			<prompt>
+        
+				<foreach item="nombre" array="nombres">
+
+				 <!--hacer una coomprobación si es mayor que el maximo, y si es así le ponemos a ceros (el contador)-->
+					<assign name="contador" expr="contador + 1"/>
+					<if cond="contador &gt; nombres.length">
+						<assign name="contador" expr="1"/>
+					</if> 
+					 <value expr="contador"/>
+					 <break time="30ms"/>
+					 <value expr="nombre"/> 
+					<break time="40ms"/>
+				</foreach>
+      </prompt>
+  
+      <noinput>
+       Lo siento, no le he oido.
+        <reprompt/>
+      </noinput>
+  
+      <nomatch>
+        Por favor seleccione una opción de las dadas.
+        <reprompt/>
+      </nomatch>
+  
+    </field>
+
+	<block> 
+		<log expr="opcion"/>
+	<log expr="nombres.length"/>
+		<if cond="opcion &gt; nombres.length">
+		<prompt>Esa opción no existe, por favor diga una que exista. <break time="30ms"/></prompt>	
+		<clear namelist="opcion"/>		
+		<goto nextitem="opcion"/>
+	</if> 
+	<assign name="longDestino" expr="getLongitudNum(quote,opcion)"/>
+	<assign name="latDestino" expr="getLatitudNum(quote,opcion)"/>
+	<!--prompt> <value expr="getLatitudNum(quote,opcion)"/><value expr="getLongitudNum(quote,opcion)"/></prompt-->
+	<goto next="Informar.vxml"/>
+	</block> 	
+	</form>
+
+</vxml>
