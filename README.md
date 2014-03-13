@@ -1,5 +1,6 @@
 Street-and-place-of-interest-locator
 ====================================
+Notice that the project dialogs are in Spanish.
 
 Enable users to interact by voice with the system to find streets, nearby restaurants and subway stations in the city of Madrid.
 
@@ -17,9 +18,10 @@ GRXML files-> these are Grammar files, they transform the voice of the user into
 To make it work you need to allocate them in a Voice Server (as Voxeo Evolution), and associate a telephone number to it.
 
 How it works:
+
 1. The system asks for the situation of the user (street name and number).
 2. The system transforms through Google directions API, the information in coordinates.
 3. The system asks the user if he wants to find a street a restaurant or a subway station.
-4.A If the user wants to go to a street, he will give the street information to the system.
-4.B If the user wants to go to a restaurant or a subway station, the user will say a distance in meters and the system will communicate the user all the places that are inside that distance, using Google Places API. Then the user will choose one.
+4.1. If the user wants to go to a street, he will give the street information to the system.
+4.2. If the user wants to go to a restaurant or a subway station, the user will say a distance in meters and the system will communicate the user all the places that are inside that distance, using Google Places API. Then the user will choose one.
 5. The system will indicate the user how to reach that place.
