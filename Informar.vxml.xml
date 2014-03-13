@@ -17,7 +17,6 @@
 	<var name="indice" expr="0"/>
 	<var name="longitud" expr="indicaciones.length"/>
 		<if cond="longitud == indice">
-			<log expr="'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkmamboooo'"/>
 			<log expr="longitud"/>
 		<else/>
 			<prompt bargein="false" xml:lang="es-es"> Ha habido un problema con el API de GOOGLE, lo sentimos. </prompt>
@@ -30,7 +29,6 @@
 	<block name="decirIndicacion"> 
 	 <log expr="origin"/>
 	 <log expr="destination"/>
-	 			<log expr="'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'"/>
 				<log expr="longitud"/>
 		
 			<if cond="indice  == longitud">		
