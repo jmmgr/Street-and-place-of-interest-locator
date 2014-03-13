@@ -10,7 +10,7 @@
 	<var name="tipo" expr="'0'"/>
 	<var name="opcion" expr="'0'"/>
 
-	<!--información peticiones a google-->
+	<!--informaciÃ³n peticiones a google-->
 	<var name="language" expr="'es'"/> 
 	<var name="sensor" expr="'false'"/> 
 	<var name="mode" expr="'walking'"/>

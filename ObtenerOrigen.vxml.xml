@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <vxml version="2.1" xmlns:voxeo="http://community.voxeo.com/xmlns/vxml" xml:lang="es-es" application="Root.vxml">
 	
 	<!--variables a revisar -->
@@ -18,11 +18,11 @@
 	 <!--le pedimos la calle de Entrada-->
 		<field name="origen">
 			<nomatch>
-			La calle no ha producido ningún resultado, por favor, repitala, o diga el nombre de otra calle.
+			La calle no ha producido ningÃºn resultado, por favor, repitala, o diga el nombre de otra calle.
 			</nomatch>
 			<help> Por favor, diga la calle origen: </help>
 			<noinput> Por favor, diga la calle origen: </noinput>
-			<!--Por que si ponesmos bargain=false hace mal al repetir la calle?? que faltaría?-->
+			<!--Por que si ponesmos bargain=false hace mal al repetir la calle?? que faltarÃ­a?-->
 			<prompt> Por favor, diga la calle origen: </prompt>
 
 			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/calles1.grxml"/>
@@ -33,10 +33,10 @@
 
 	<!--le pedimos el numero origen-->
 		<field name="numeroOrigen">
-			<nomatch>No he entendido correctamente el número, por favor repitalo.  </nomatch>
-			<help>  Por favor, diga el número de la calle origen: </help>
-			<noinput> Por favor, diga el número de la calle origen:</noinput>
-			<prompt> Por favor, diga el número de la calle origen: </prompt>
+			<nomatch>No he entendido correctamente el nÃºmero, por favor repitalo.  </nomatch>
+			<help>  Por favor, diga el nÃºmero de la calle origen: </help>
+			<noinput> Por favor, diga el nÃºmero de la calle origen:</noinput>
+			<prompt> Por favor, diga el nÃºmero de la calle origen: </prompt>
 
 			<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
 			<filled>
@@ -46,7 +46,7 @@
 
 		<!--le decimos lo que se ha entendido-->
 		<block name="ConfirmacionEntradaOrigen"> 
-			<prompt bargein="false" xml:lang="es-es">La calle de origen es:  <value expr="origenAux"/>, número:  <value expr="origenAuxNum"/>. 
+			<prompt bargein="false" xml:lang="es-es">La calle de origen es:  <value expr="origenAux"/>, nÃºmero:  <value expr="origenAuxNum"/>. 
 			</prompt> 
 		</block>   
 
@@ -57,7 +57,7 @@
 			<nomatch> No le entiendo, diga Si o No.</nomatch>
 			<help> Por favor, diga Si o No: </help>
 			<noinput> Por favor, diga Si o No:</noinput>
-			<prompt bargein="false"> ¿Es correcto?: </prompt>
+			<prompt bargein="false"> Â¿Es correcto?: </prompt>
 				<grammar src="http://webhosting.voxeo.net/61369/www/grammar/SiNo.grxml"/>
 			<filled>
 				<if cond="ConfirmaOrigen=='No'"> 
@@ -106,13 +106,13 @@
 	
 	<form id="ObtenerOpcion">
 	  
-	<!--seleccionamos una opción entre metro, restaurante, callejero-->
+	<!--seleccionamos una opciÃ³n entre metro, restaurante, callejero-->
 
 		<field name="opcion">
-			<nomatch> No le entiendo, por favor diga una opción.</nomatch>
-			<help> Por favor, seleccione una opción </help>
-			<noinput> Seleccione una opción</noinput>
-			<prompt bargein="false"><!--Dirígete al nordeste por Calle de Agustín de Foxá<value expr="decirAlgo()"/--> Si desea ir a otra calle diga uno, si desea ir a una parada de metro cercana diga dos, si desea ir a un restaurante cercano diga tres </prompt>
+			<nomatch> No le entiendo, por favor diga una opciÃ³n.</nomatch>
+			<help> Por favor, seleccione una opciÃ³n </help>
+			<noinput> Seleccione una opciÃ³n</noinput>
+			<prompt bargein="false"><!--DirÃ­gete al nordeste por Calle de AgustÃ­n de FoxÃ¡<value expr="decirAlgo()"/--> Si desea ir a otra calle diga uno, si desea ir a una parada de metro cercana diga dos, si desea ir a un restaurante cercano diga tres </prompt>
 				<grammar src="http://webhosting.voxeo.net/61369/www/grammar/numeros.grxml"/>
 			<filled>
 				<if cond="opcion=='1'"> 

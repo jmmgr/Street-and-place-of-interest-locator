@@ -1,6 +1,6 @@
 		function decirAlgo()
 		{
-			return "DirÌgete al nordeste por Calle de AgustÌn de Fox·";
+			return "Dir√≠gete al nordeste por Calle de Agust√≠n de Fox√°";
 		}
 		
 		function getElements(quote)
@@ -9,7 +9,7 @@
 			var result =quote.getElementsByTagName("html_instructions");
 			var indicaciones = new Array;
 				for(i=0;i<result.length;i++)
-					indicaciones[i]= utf8_decode(quitarHTML(CambiarAbreviaturas(result.item(i).firstChild.data)));
+					indicaciones[i]= quitarHTML(CambiarAbreviaturas(result.item(i).firstChild.data));
 					
 			return indicaciones;
 		}
@@ -27,7 +27,7 @@
 			var result =quote.getElementsByTagName("name");
 			var nombres = new Array;
 				for(i=0;i<result.length;i++)
-					nombres[i]= utf8_decode(result.item(i).firstChild.data);
+					nombres[i]= result.item(i).firstChild.data;
 					
 			return nombres;
 		}

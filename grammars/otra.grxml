@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar root="inicio" version="1.0" xml:lang="es-es" tag-format="semantics/1.0">
+	<rule id="inicio" scope="public">
+		<one-of>
+    			<item> Otra <tag>out="Otra";</tag> </item>
+    			<item> Salir <tag>out="Salir";</tag> </item>
+ 			
+    		</one-of>
+   	</rule>
+	
+</grammar>
